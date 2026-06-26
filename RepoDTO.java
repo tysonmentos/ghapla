@@ -72,3 +72,14 @@ public class Job {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
+    private final ModelMapper mapper;
+
+    @Override
+    public List<CompanyRespDTO> getCompanyDetailsByIndustryAndLocation(Industry industry, String location) {
+        List<Company> companies = companyRepository.findByIndustryAndLocationIgnoreCase(industry, location);
+        return companies.stream().map(company -> mapper.map(company, CompanyRespDTO.class))
+                .collect(Collectors.toList());
+    }
