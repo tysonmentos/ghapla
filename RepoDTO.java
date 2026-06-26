@@ -75,11 +75,18 @@ public class Job {
 
 ----------------------------------------------------------------------------------------------------------------------------------------
 
-    private final ModelMapper mapper;
+    @RestControllerAdvice
+public class GlobalExceptionHandler {
 
-    @Override
-    public List<CompanyRespDTO> getCompanyDetailsByIndustryAndLocation(Industry industry, String location) {
-        List<Company> companies = companyRepository.findByIndustryAndLocationIgnoreCase(industry, location);
-        return companies.stream().map(company -> mapper.map(company, CompanyRespDTO.class))
-                .collect(Collectors.toList());
-    }
+@ExceptionHandler(ResourceNotFoundException.class)
+public ResponseEntity<?> handleResourceNotFoundException(ResourceNotFoundException e) {
+return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new apiResponse(e.getMessage(), "Failed"));
+}
+
+
+
+@ExceptionHandler(Exception.class)
+public ResponseEntity<?>handleException(Exception e){
+return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new apiResponse(e.getMessage(), "Failed"));
+}
+}
